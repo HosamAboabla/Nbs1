@@ -36,6 +36,12 @@ def create_resturants_csv():
 
 
 
+
+def get_page_number(url):
+    n = url.split("&")[-1].split("=")[-1]
+    return int(n)
+
+
 def log_returants(resturants):
     file_path = 'resturants.csv'
     with open(file_path, 'a', encoding='UTF-8') as f:
@@ -55,14 +61,6 @@ def get_resturants(url):
     soup = BeautifulSoup(html_source_code, 'lxml')
     
 
-    ############
-    footer_soup = soup.find("footer" , {"class" : "mt-12"}).contents[0]
-    footer_links = footer_soup.findChildren("a" , recursive=False)
-    last_url = footer_links[-1]["href"]
-    print("footer length" , len(footer_links))
-    print(last_url)
-
-    ###########
 
 
 
@@ -95,10 +93,26 @@ def get_resturants(url):
     
     log_returants(resturants)
     # write_file('source.txt' , names)
-    
+
+
+    ############
+    footer_soup = soup.find("footer" , {"class" : "mt-12"}).contents[0]
+    footer_links = footer_soup.findChildren("a" , recursive=False)
+    last_url = footer_links[-1]["href"]
+    print("footer length" , len(footer_links))
+    print(last_url)
+    current_page = get_page_number(url)
+    last_page = get_page_number(last_url)
+    if current_page < last_page:
+        next_url = url.replace(f"page={current_page}" , f"page={current_page+1}")
+        get_resturants(next_url)
+
+        
+    print("page number" , get_page_number(last_url))
+    ###########
     
 if __name__ == "__main__":
-    url = "restaurants/%D8%A8%D8%AD%D8%B1%D9%8A%D9%86/%D8%A7%D9%84%D9%85%D8%AD%D8%B1%D9%82?lat=26.2504534&lng=50.6100213"
+    url = "restaurants/%D8%A8%D8%AD%D8%B1%D9%8A%D9%86/%D8%A7%D9%84%D9%85%D8%AD%D8%B1%D9%82?lat=26.2504534&lng=50.6100213&page=1"
     # url = "restaurants/بحرين/المحرق?lat=26.2504534&lng=50.6100213"
     create_resturants_csv()
     get_resturants(url)
