@@ -1,0 +1,12 @@
+venv/
+linux_env/
+chromedriver.exe
+*.txt
+__pycache__/
+*.csv
+*.xlsx
+*.html
+
+
+main.py
+get_location.py
