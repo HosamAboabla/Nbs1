@@ -3,10 +3,15 @@ linux_env/
 chromedriver.exe
 *.txt
 __pycache__/
-*.csv
 *.xlsx
 *.html
+*.zip
+
+images/
+
+image_utils.py
 
 
-main.py
 get_location.py
+resturants_sa.csv
+resturants.csv

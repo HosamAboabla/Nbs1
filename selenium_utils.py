@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
 import csv
-import requests
+from get_location import get_long_lat
 import settings
 from bs4 import BeautifulSoup
 
@@ -15,7 +15,7 @@ driver = webdriver.Chrome('./chromedriver.exe')
 wait = WebDriverWait(driver , 600)
 
 
-
+seen = {}
 
 def write_file(file_name , page):
     with open(file_name, "w", encoding="utf-8") as f:
@@ -32,7 +32,7 @@ def create_resturants_csv():
     file_path = 'resturants.csv'
     with open(file_path, 'w', encoding='UTF-8') as f:
         writer = csv.writer(f, delimiter=",", lineterminator="\n")
-        writer.writerow(['link' ,'background_image','icon', 'name', 'description', 'rate'])
+        writer.writerow(['link' ,'background_image','icon', 'name', 'description', 'rate' , "lat" , "lng" , "address" , "zone"])
 
 
 
@@ -49,13 +49,14 @@ def log_returants(resturants):
         for resturant in resturants:
             writer.writerow([
                 resturant["link"] , resturant['background_image'] ,resturant['icon'], 
-                resturant['name'], resturant['description'], resturant['rate']
+                resturant['name'], resturant['description'], resturant['rate'] , resturant["lat"] , resturant["lng"]
                 ])
     
 
 def get_resturants(url):
-    
+    global seen
 
+    city_name = url.split("/")[1]
     html_source_code = get_page_source(url)
 
     soup = BeautifulSoup(html_source_code, 'lxml')
@@ -76,20 +77,36 @@ def get_resturants(url):
         background_image = article.contents[0].find("img")["src"]
         icon = article.contents[0].find("div").find("img")["src"]
         name = article.contents[1].contents[0].contents[0].find('h1').text
+
+        if seen.get(name ,-1) == 1:
+            continue
+
         rate = article.contents[1].contents[0].contents[1].find('span').text
         description = article.contents[1].contents[0].contents[0].find('p').text
 
+        try:
+            location = "مطعم " + name +  " " + city_name + " السعودية"
+            lat  , lng = get_long_lat(location)
+        except:
+            lat , lng = 0 , 0
+
+        zone = url.split("/")[2]
+        address = url.split("/")[1] + " " + zone
         resturant = {
             "link" : link,
             "background_image" : background_image,
             "icon" : icon,
             "name": name,
             "description" : description,
-            "rate" : rate
+            "rate" : rate,
+            "lat" : lat,
+            "lng" : lng,
+            "address":address,
+            "zone" : zone
         }
-
+        
         resturants.append(resturant)
-
+        seen[name] = 1
     
     log_returants(resturants)
     # write_file('source.txt' , names)
@@ -111,16 +128,3 @@ def get_resturants(url):
     print("page number" , get_page_number(last_url))
     ###########
     
-if __name__ == "__main__":
-    # url = "restaurants/%D8%A8%D8%AD%D8%B1%D9%8A%D9%86/%D8%A7%D9%84%D9%85%D8%AD%D8%B1%D9%82?lat=26.2504534&lng=50.6100213&page=1"
-    url = "restaurants/riyadh/riyadh?lat=24.7135517&lng=46.6752957"
-    # url = "restaurants/بحرين/المحرق?lat=26.2504534&lng=50.6100213"
-    create_resturants_csv()
-    get_resturants(url)
-
-    # next_btn =  WebDriverWait(driver, 10).until(
-    #                 EC.presence_of_element_located((By.XPATH , '//*[@id="__next"]/main/section/footer/div/a[5]'))
-    #             ).text
-    
-
-    # print(next_btn)
