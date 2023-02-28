@@ -12,6 +12,5 @@ images/
 image_utils.py
 
 
-get_location.py
 resturants_sa.csv
 resturants.csv
