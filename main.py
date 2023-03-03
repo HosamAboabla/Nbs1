@@ -20,4 +20,4 @@ if __name__ == "__main__":
     for line in csv.DictReader(data):
       get_resturants(line["url"])
       logs(line["url"])
-      break
+      t = input("press enter")
