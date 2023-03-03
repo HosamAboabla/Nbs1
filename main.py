@@ -18,6 +18,9 @@ if __name__ == "__main__":
 
   with open(file_name, 'r' , encoding="utf-8") as data:
     for line in csv.DictReader(data):
-      get_resturants(line["url"])
-      logs(line["url"])
-      t = input("press enter")
+      try:
+        get_resturants(line["url"])
+        logs(line["url"])
+        t = input("press enter")
+      except:
+         logs(line["url"] + "#"*20)
