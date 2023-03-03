@@ -8,9 +8,10 @@ __pycache__/
 *.zip
 
 images/
+files/
 
 image_utils.py
 
 
 resturants_sa.csv
-resturants.csv
+resturants_last.csv
