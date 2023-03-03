@@ -130,8 +130,10 @@ def get_resturants(url):
         article = resturant_soup.contents[0]
 
         name = article.contents[1].contents[0].contents[0].find('h1').text
+        zone = url.split('/')[2].split("?")[0]
+        address = url.split("/")[1] + " " + zone
 
-        if seen.get(name ,-1) == 1:
+        if seen.get(name+address+zone ,-1) == 1:
             continue
 
         background_image_url = article.contents[0].find("img")["src"]
@@ -139,8 +141,6 @@ def get_resturants(url):
         rate = article.contents[1].contents[0].contents[1].find('span').text
         description = article.contents[1].contents[0].contents[0].find('p').text
 
-        zone = url.split('/')[2].split("?")[0]
-        address = url.split("/")[1] + " " + zone
 
         try:
             location = "مطعم "+ name + " " + address + " السعودية"
@@ -177,7 +177,7 @@ def get_resturants(url):
         resturants.append(resturant)
         links_resturants.append(link_res)
         res_id += 1
-        seen[name] = 1
+        seen[name+address+zone] = 1
     
     log_returants(resturants)
     log_links_returants(links_resturants)
