@@ -80,7 +80,7 @@ def log_returants(resturants):
                 resturant["id"],resturant["name"],resturant["phone"],None,resturant["logo"],resturant["latitude"],resturant["longitude"]
                 ,resturant["address"],"NULL","0","NULL","0","1","7","NULL","NULL","0",
                 "NULL",resturant["cover_photo"],"1","1","1","0",
-                "1", # zone_id
+                "6", # zone_id
                 "1",
                 "1",None,"NULL","0","0","0","30-40",
                 "1","1","0","0",
@@ -139,11 +139,11 @@ def get_resturants(url):
         rate = article.contents[1].contents[0].contents[1].find('span').text
         description = article.contents[1].contents[0].contents[0].find('p').text
 
-        zone = url.split("/")[2]
+        zone = url.split('/')[2].split("?")[0]
         address = url.split("/")[1] + " " + zone
 
         try:
-            location = "مطعم " + address + " السعودية"
+            location = "مطعم "+ name + " " + address + " السعودية"
             lat  , lng = get_long_lat(location)
         except:
             lat , lng = 0 , 0
