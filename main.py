@@ -21,6 +21,5 @@ if __name__ == "__main__":
       try:
         get_resturants(line["url"])
         logs(line["url"])
-        t = input("press enter")
       except:
          logs(line["url"] + "#"*20)
